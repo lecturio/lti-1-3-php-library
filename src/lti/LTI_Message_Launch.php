@@ -207,21 +207,29 @@ class LTI_Message_Launch {
 
     private function get_public_key() {
         $key_set_url = $this->registration->get_key_set_url();
-
         // Download key set
         $public_key_set = json_decode(file_get_contents($key_set_url), true);
+
 
         if (empty($public_key_set)) {
             // Failed to fetch public keyset from URL.
             throw new LTI_Exception("Failed to fetch public key", 1);
         }
 
+        // Remove unneeded keys from 'keys' array
+        foreach ($public_key_set['keys'] as $index => $key) {
+            if ($key['kid'] != $this->jwt['header']['kid']) {
+                unset($key['kid'][$index]);
+            }
+        }
+
         // Find key used to sign the JWT (matches the KID in the header)
-        foreach ($public_key_set['keys'] as $key) {
+        foreach ($public_key_set['keys'] as $index => $key) {
             if ($key['kid'] == $this->jwt['header']['kid']) {
                 try {
-                    return openssl_pkey_get_details(JWK::parseKey($key));
-                } catch(\Exception $e) {
+                    $parsedKeys = JWK::parseKeySet($public_key_set);
+                    return openssl_pkey_get_details($parsedKeys[$this->jwt['header']['kid']]);
+                } catch (\Exception $e) {
                     return false;
                 }
             }
@@ -269,6 +277,9 @@ class LTI_Message_Launch {
     }
 
     private function validate_nonce() {
+        //
+        // TODO: Make real validation for none
+        //
         if (!$this->cache->check_nonce($this->jwt['body']['nonce'])) {
             //throw new LTI_Exception("Invalid Nonce");
         }
