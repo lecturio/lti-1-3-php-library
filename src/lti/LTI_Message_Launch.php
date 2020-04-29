@@ -81,6 +81,7 @@ class LTI_Message_Launch {
         return $this->validate_state()
             ->validate_jwt_format()
             ->validate_nonce()
+            ->validate_timestamp()
             ->validate_registration()
             ->validate_jwt_signature()
             ->validate_deployment()
@@ -277,12 +278,25 @@ class LTI_Message_Launch {
     }
 
     private function validate_nonce() {
-        //
-        // TODO: Make real validation for none
-        //
         if (!$this->cache->check_nonce($this->jwt['body']['nonce'])) {
-            //throw new LTI_Exception("Invalid Nonce");
+            throw new LTI_Exception("Invalid Nonce");
         }
+        return $this;
+    }
+
+    private function validate_timestamp() {
+        $currentTimestamp = time();
+
+        // Check if timestamp is not in the future
+        if ($currentTimestamp < $this->jwt['body']['iat']) {
+            throw new LTI_Exception("Invalid timestamp is in future");
+        }
+
+        // Check if not expired
+        if ($currentTimestamp > $this->jwt['body']['exp']) {
+            throw new LTI_Exception("Expired request");
+        }
+
         return $this;
     }
 
