@@ -220,7 +220,7 @@ class LTI_Message_Launch {
         // Remove unneeded keys from 'keys' array
         foreach ($public_key_set['keys'] as $index => $key) {
             if ($key['kid'] != $this->jwt['header']['kid']) {
-                unset($key['kid'][$index]);
+                unset($public_key_set['keys'][$index]);
             }
         }
 
