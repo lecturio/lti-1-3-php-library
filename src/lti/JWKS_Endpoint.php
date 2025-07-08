@@ -3,6 +3,7 @@ namespace IMSGlobal\LTI;
 
 use phpseclib\Crypt\RSA;
 use \Firebase\JWT\JWT;
+use IMSGlobal\LTI\JWT_Proxy;
 
 /**
  * JWKS endpoint for public key distribution.
@@ -74,8 +75,8 @@ class JWKS_Endpoint
                 'kty' => 'RSA',
                 'alg' => 'RS256',
                 'use' => 'sig',
-                'e' => JWT::urlsafeB64Encode($key->publicExponent->toBytes()),
-                'n' => JWT::urlsafeB64Encode($key->modulus->toBytes()),
+                'e' => JWT_Proxy::urlsafeB64Encode($key->publicExponent->toBytes()),
+                'n' => JWT_Proxy::urlsafeB64Encode($key->modulus->toBytes()),
                 'kid' => $kid,
             );
             $jwks[] = $components;

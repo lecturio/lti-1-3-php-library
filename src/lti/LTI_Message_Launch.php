@@ -3,8 +3,9 @@ namespace IMSGlobal\LTI;
 
 use Firebase\JWT\JWK;
 use Firebase\JWT\JWT;
+use IMSGlobal\LTI\JWT_Proxy;
 
-JWT::$leeway = 5;
+JWT_Proxy::setLeeway(5);
 
 /**
  * Class LTI_Message_Launch
@@ -303,8 +304,8 @@ class LTI_Message_Launch
         if (count($jwt_parts) !== 3) {
             throw new LTI_Exception("Invalid id_token, JWT must contain 3 parts", 1);
         }
-        $this->jwt['header'] = json_decode(JWT::urlsafeB64Decode($jwt_parts[0]), true);
-        $this->jwt['body'] = json_decode(JWT::urlsafeB64Decode($jwt_parts[1]), true);
+        $this->jwt['header'] = json_decode(JWT_Proxy::urlsafeB64Decode($jwt_parts[0]), true);
+        $this->jwt['body'] = json_decode(JWT_Proxy::urlsafeB64Decode($jwt_parts[1]), true);
         return $this;
     }
 
@@ -348,7 +349,7 @@ class LTI_Message_Launch
     {
         $public_key = $this->get_public_key();
         try {
-            JWT::decode($this->request['id_token'], $public_key['key'], array('RS256'));
+            JWT_Proxy::decode($this->request['id_token'], $public_key['key'], array('RS256'));
         } catch (\Exception $e) {
             throw new LTI_Exception("Invalid signature on id_token", 1);
         }

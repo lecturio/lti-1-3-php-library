@@ -2,6 +2,7 @@
 namespace IMSGlobal\LTI;
 
 use Firebase\JWT\JWT;
+use IMSGlobal\LTI\JWT_Proxy;
 
 /**
  * Class LTI_Service_Connector
@@ -67,7 +68,7 @@ class LTI_Service_Connector
         ];
 
         // Sign the JWT with our private key (given by the platform on registration)
-        $jwt = JWT::encode($jwt_claim, $this->registration->get_tool_private_key(), 'RS256', $this->registration->get_kid());
+        $jwt = JWT_Proxy::encode($jwt_claim, $this->registration->get_tool_private_key(), 'RS256', $this->registration->get_kid());
 
         // Build auth token request headers
         $auth_request = [

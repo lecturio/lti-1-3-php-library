@@ -2,6 +2,7 @@
 namespace IMSGlobal\LTI;
 
 use \Firebase\JWT\JWT;
+use IMSGlobal\LTI\JWT_Proxy;
 /**
  * Class LTI_Deep_Link
  * Handles LTI 1.3 Deep Linking response generation and form output.
@@ -55,10 +56,11 @@ class LTI_Deep_Link
             "https://purl.imsglobal.org/spec/lti/claim/message_type" => "LtiDeepLinkingResponse",
             "https://purl.imsglobal.org/spec/lti/claim/version" => "1.3.0",
             "https://purl.imsglobal.org/spec/lti-dl/claim/content_items" => array_map(function ($resource) {
-                return $resource->to_array(); }, $resources),
+                return $resource->to_array();
+            }, $resources),
             "https://purl.imsglobal.org/spec/lti-dl/claim/data" => isset($this->deep_link_settings['data']) ? $this->deep_link_settings['data'] : '',
         ];
-        return JWT::encode($message_jwt, $this->registration->get_tool_private_key(), 'RS256', $this->registration->get_kid());
+        return JWT_Proxy::encode($message_jwt, $this->registration->get_tool_private_key(), 'RS256', $this->registration->get_kid());
     }
 
     /**
