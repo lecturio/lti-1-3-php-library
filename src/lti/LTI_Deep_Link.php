@@ -2,19 +2,49 @@
 namespace IMSGlobal\LTI;
 
 use \Firebase\JWT\JWT;
-class LTI_Deep_Link {
+/**
+ * Class LTI_Deep_Link
+ * Handles LTI 1.3 Deep Linking response generation and form output.
+ * @package IMSGlobal\LTI
+ */
+class LTI_Deep_Link
+{
 
+    /**
+     * @var object Registration object implementing get_client_id(), get_issuer(), get_tool_private_key(), get_kid()
+     */
     private $registration;
+    /**
+     * @var string Deployment ID
+     */
     private $deployment_id;
+    /**
+     * @var array<string, mixed> Deep link settings, must include 'deep_link_return_url' and optionally 'data'
+     */
     private $deep_link_settings;
 
-    public function __construct($registration, $deployment_id, $deep_link_settings) {
+    /**
+     * LTI_Deep_Link constructor.
+     *
+     * @param object $registration Registration object
+     * @param string $deployment_id Deployment ID
+     * @param array<string, mixed> $deep_link_settings Deep link settings
+     */
+    public function __construct($registration, $deployment_id, $deep_link_settings)
+    {
         $this->registration = $registration;
         $this->deployment_id = $deployment_id;
         $this->deep_link_settings = $deep_link_settings;
     }
 
-    public function get_response_jwt($resources) {
+    /**
+     * Generate a JWT for the LTI Deep Linking response.
+     *
+     * @param array<int, object> $resources Array of resource objects implementing to_array()
+     * @return string JWT string
+     */
+    public function get_response_jwt($resources)
+    {
         $message_jwt = [
             "iss" => $this->registration->get_client_id(),
             "aud" => [$this->registration->get_issuer()],
@@ -24,13 +54,21 @@ class LTI_Deep_Link {
             "https://purl.imsglobal.org/spec/lti/claim/deployment_id" => $this->deployment_id,
             "https://purl.imsglobal.org/spec/lti/claim/message_type" => "LtiDeepLinkingResponse",
             "https://purl.imsglobal.org/spec/lti/claim/version" => "1.3.0",
-            "https://purl.imsglobal.org/spec/lti-dl/claim/content_items" => array_map(function($resource) { return $resource->to_array(); }, $resources),
+            "https://purl.imsglobal.org/spec/lti-dl/claim/content_items" => array_map(function ($resource) {
+                return $resource->to_array(); }, $resources),
             "https://purl.imsglobal.org/spec/lti-dl/claim/data" => isset($this->deep_link_settings['data']) ? $this->deep_link_settings['data'] : '',
         ];
         return JWT::encode($message_jwt, $this->registration->get_tool_private_key(), 'RS256', $this->registration->get_kid());
     }
 
-    public function output_response_form($resources) {
+    /**
+     * Output an auto-submitting HTML form with the Deep Linking response JWT.
+     *
+     * @param array<int, object> $resources Array of resource objects implementing to_array()
+     * @return void
+     */
+    public function output_response_form($resources)
+    {
         $jwt = $this->get_response_jwt($resources);
         ?>
         <form id="auto_submit" action="<?= $this->deep_link_settings['deep_link_return_url']; ?>" method="POST">

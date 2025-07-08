@@ -1,17 +1,46 @@
 <?php
 namespace IMSGlobal\LTI;
 
-class LTI_Course_Groups_Service {
+/**
+ * Class LTI_Course_Groups_Service
+ * Service for retrieving course groups and group sets via LTI.
+ */
+class LTI_Course_Groups_Service
+{
 
+    /**
+     * @var LTI_Service_Connector
+     */
     private $service_connector;
+    /**
+     * @var array<string, mixed> Service data including URLs and scope
+     */
     private $service_data;
 
-    public function __construct(LTI_Service_Connector $service_connector, $service_data) {
+    /**
+     * LTI_Course_Groups_Service constructor.
+     *
+     * @param LTI_Service_Connector $service_connector
+     * @param array<string, mixed> $service_data
+     */
+    public function __construct(LTI_Service_Connector $service_connector, $service_data)
+    {
         $this->service_connector = $service_connector;
         $this->service_data = $service_data;
     }
 
-    public function get_groups() {
+    /**
+     * Get all groups for the current context.
+     *
+     * @return array<array{
+     *     id: string,
+     *     name: string,
+     *     set_id?: string,
+     *     [key: string]: mixed
+     * }>
+     */
+    public function get_groups()
+    {
 
         $groups = [];
 
@@ -30,7 +59,7 @@ class LTI_Course_Groups_Service {
             $groups = array_merge($groups, $page['body']['groups']);
 
             $next_page = false;
-            foreach($page['headers'] as $header) {
+            foreach ($page['headers'] as $header) {
                 if (preg_match(LTI_Service_Connector::NEXT_PAGE_REGEX, $header, $matches)) {
                     $next_page = $matches[1];
                     break;
@@ -41,7 +70,17 @@ class LTI_Course_Groups_Service {
 
     }
 
-    public function get_sets() {
+    /**
+     * Get all group sets for the current context.
+     *
+     * @return array<array{
+     *     id: string,
+     *     name: string,
+     *     [key: string]: mixed
+     * }>
+     */
+    public function get_sets()
+    {
 
         $sets = [];
 
@@ -65,7 +104,7 @@ class LTI_Course_Groups_Service {
             $sets = array_merge($sets, $page['body']['sets']);
 
             $next_page = false;
-            foreach($page['headers'] as $header) {
+            foreach ($page['headers'] as $header) {
                 if (preg_match(LTI_Service_Connector::NEXT_PAGE_REGEX, $header, $matches)) {
                     $next_page = $matches[1];
                     break;
@@ -76,7 +115,23 @@ class LTI_Course_Groups_Service {
 
     }
 
-    public function get_groups_by_set() {
+    /**
+     * Get groups organized by set. Includes a 'none' set for groups without a set.
+     *
+     * @return array<string, array{
+     *     id: string,
+     *     name: string,
+     *     groups: array<string, array{
+     *         id: string,
+     *         name: string,
+     *         set_id?: string,
+     *         [key: string]: mixed
+     *     }>,
+     *     [key: string]: mixed
+     * }>
+     */
+    public function get_groups_by_set()
+    {
         $groups = $this->get_groups();
         $sets = $this->get_sets();
 

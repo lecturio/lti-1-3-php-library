@@ -1,7 +1,12 @@
 <?php
 namespace IMSGlobal\LTI;
 
-class OIDC_Exception extends \Exception {
+/**
+ * Exception for OIDC errors.
+ * @package IMSGlobal\LTI
+ */
+class OIDC_Exception extends \Exception
+{
 
 }
 ?>

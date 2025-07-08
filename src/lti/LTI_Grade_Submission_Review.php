@@ -1,56 +1,125 @@
 <?php
 namespace IMSGlobal\LTI;
 
-class LTI_Grade_Submission_Review {
+/**
+ * Class LTI_Grade_Submission_Review
+ * Handles reviewable status, label, URL, and custom data for grade submission review.
+ * @package IMSGlobal\LTI
+ */
+class LTI_Grade_Submission_Review
+{
+    /**
+     * @var string|null Reviewable status value
+     */
     private $reviewable_status;
+    /**
+     * @var string|null Label for the review
+     */
     private $label;
+    /**
+     * @var string|null URL for the review
+     */
     private $url;
+    /**
+     * @var mixed Custom data for the review
+     */
     private $custom;
 
     /**
-     * Static function to allow for method chaining without having to assign to a variable first.
+     * Create a new instance for method chaining.
+     * @return LTI_Grade_Submission_Review
      */
-    public static function new() {
+    public static function new()
+    {
         return new LTI_Grade_Submission_Review();
     }
 
-    public function get_reviewable_status() {
+    /**
+     * Get the reviewable status.
+     * @return string|null
+     */
+    public function get_reviewable_status()
+    {
         return $this->reviewable_status;
     }
 
-    public function set_reviewable_status($value) {
+    /**
+     * Set the reviewable status.
+     * @param string|null $value
+     * @return $this
+     */
+    public function set_reviewable_status($value)
+    {
         $this->reviewable_status = $value;
         return $this;
     }
 
-    public function get_label() {
+    /**
+     * Get the label.
+     * @return string|null
+     */
+    public function get_label()
+    {
         return $this->label;
     }
 
-    public function set_label($value) {
+    /**
+     * Set the label.
+     * @param string|null $value
+     * @return $this
+     */
+    public function set_label($value)
+    {
         $this->label = $value;
         return $this;
     }
 
-    public function get_url() {
+    /**
+     * Get the URL.
+     * @return string|null
+     */
+    public function get_url()
+    {
         return $this->url;
     }
 
-    public function set_url($url) {
+    /**
+     * Set the URL.
+     * @param string|null $url
+     * @return $this
+     */
+    public function set_url($url)
+    {
         $this->url = $url;
         return $this;
     }
 
-    public function get_custom() {
+    /**
+     * Get the custom data.
+     * @return mixed
+     */
+    public function get_custom()
+    {
         return $this->custom;
     }
 
-    public function set_custom($value) {
+    /**
+     * Set the custom data.
+     * @param mixed $value
+     * @return $this
+     */
+    public function set_custom($value)
+    {
         $this->custom = $value;
         return $this;
     }
 
-    public function __toString() {
+    /**
+     * Convert the object to a JSON string.
+     * @return string
+     */
+    public function __toString()
+    {
         return json_encode(array_filter([
             "reviewableStatus" => $this->reviewable_status,
             "label" => $this->label,
