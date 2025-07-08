@@ -348,7 +348,7 @@ class LTI_Message_Launch
     {
         $public_key = $this->get_public_key();
         try {
-            JWT_Proxy::decode($this->request['id_token'], $public_key['key'], array('RS256'));
+            JWT_Proxy::decode($this->request['id_token'], $public_key['key'], 'RS256');
         } catch (\Exception $e) {
             throw new LTI_Exception("Invalid signature on id_token", 1);
         }

@@ -16,7 +16,7 @@ class JWT_Proxy
     public static function encode(
         $payload,
         $key,
-        $alg = 'HS256',
+        $alg = 'RS256',
         $keyId = null,
         $head = null
     ) {
@@ -27,9 +27,10 @@ class JWT_Proxy
      * Proxy for JWT::decode
      * @see JWT::decode
      */
-    public static function decode($jwt, $key, array $allowed_algs = [])
+    public static function decode($jwt, $key, $algo = 'RS256')
     {
-        return JWT::decode($jwt, $key, $allowed_algs);
+        $keyobject = new \Firebase\JWT\Key($key, $algo);
+        return JWT::decode($jwt, $keyobject);
     }
 
     /**

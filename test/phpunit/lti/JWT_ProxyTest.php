@@ -25,7 +25,7 @@ class JWT_ProxyTest extends TestCase
     {
         $payload = ['foo' => 'bar', 'iat' => time()];
         $jwt = JWT_Proxy::encode($payload, $this->privateKey, 'RS256');
-        $decoded = JWT_Proxy::decode($jwt, $this->publicKey, ['RS256']);
+        $decoded = JWT_Proxy::decode($jwt, $this->publicKey, 'RS256');
         $this->assertEquals($payload['foo'], $decoded->foo);
     }
 
@@ -52,8 +52,8 @@ class JWT_ProxyTest extends TestCase
         $jwt2 = JWT::encode($payload, $this->privateKey, 'RS256');
         $this->assertEquals($jwt2, $jwt1);
 
-        $decoded1 = JWT_Proxy::decode($jwt1, $this->publicKey, ['RS256']);
-        $decoded2 = JWT::decode($jwt2, $this->publicKey, ['RS256']);
+        $decoded1 = JWT_Proxy::decode($jwt1, $this->publicKey, 'RS256');
+        $decoded2 = JWT::decode($jwt2, new \Firebase\JWT\Key($this->publicKey, 'RS256'));
         $this->assertEquals($decoded2->baz, $decoded1->baz);
 
         $data = 'abc-xyz';
