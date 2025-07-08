@@ -2,7 +2,6 @@
 namespace IMSGlobal\LTI;
 
 use Firebase\JWT\JWK;
-use Firebase\JWT\JWT;
 use IMSGlobal\LTI\JWT_Proxy;
 
 JWT_Proxy::setLeeway(5);

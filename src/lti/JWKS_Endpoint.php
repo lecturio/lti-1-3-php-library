@@ -2,7 +2,6 @@
 namespace IMSGlobal\LTI;
 
 use phpseclib\Crypt\RSA;
-use \Firebase\JWT\JWT;
 use IMSGlobal\LTI\JWT_Proxy;
 
 /**

@@ -1,7 +1,6 @@
 <?php
 namespace IMSGlobal\LTI;
 
-use Firebase\JWT\JWT;
 use IMSGlobal\LTI\JWT_Proxy;
 
 /**
