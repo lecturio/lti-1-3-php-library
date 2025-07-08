@@ -51,14 +51,18 @@ class LTI_Assignments_Grades_Service
         if ($lineitem !== null && empty($lineitem->get_id())) {
             $lineitem = $this->find_or_create_lineitem($lineitem);
             $score_url = $lineitem->get_id();
+        } else if ($lineitem !== null && !empty($lineitem->get_id())) {
+            $score_url = $lineitem->get_id();
         } else if ($lineitem === null && !empty($this->service_data['lineitem'])) {
             $score_url = $this->service_data['lineitem'];
-        } else {
+        } else if ($lineitem === null && !empty($this->service_data['lineitems'])) {
             $lineitem = LTI_Lineitem::new()
                 ->set_label('default')
                 ->set_score_maximum(100);
             $lineitem = $this->find_or_create_lineitem($lineitem);
             $score_url = $lineitem->get_id();
+        } else {
+            throw new LTI_Exception('No lineitem or lineitems information available to submit grade', 1);
         }
 
         // Place '/scores' before url params
