@@ -1,17 +1,43 @@
 <?php
 namespace IMSGlobal\LTI;
 
-class LTI_Names_Roles_Provisioning_Service {
+/**
+ * Class LTI_Names_Roles_Provisioning_Service
+ * Handles LTI Names and Roles Provisioning Service operations.
+ * @package IMSGlobal\LTI
+ */
+class LTI_Names_Roles_Provisioning_Service
+{
 
+    /**
+     * @var LTI_Service_Connector
+     */
     private $service_connector;
+
+    /**
+     * @var array<string, mixed>
+     */
     private $service_data;
 
-    public function __construct(LTI_Service_Connector $service_connector, $service_data) {
+    /**
+     * LTI_Names_Roles_Provisioning_Service constructor.
+     *
+     * @param LTI_Service_Connector $service_connector
+     * @param array<string, mixed> $service_data
+     */
+    public function __construct(LTI_Service_Connector $service_connector, $service_data)
+    {
         $this->service_connector = $service_connector;
         $this->service_data = $service_data;
     }
 
-    public function get_members() {
+    /**
+     * Get all members from the context memberships endpoint.
+     *
+     * @return array<array<string, mixed>>
+     */
+    public function get_members()
+    {
 
         $members = [];
 
@@ -30,7 +56,7 @@ class LTI_Names_Roles_Provisioning_Service {
             $members = array_merge($members, $page['body']['members']);
 
             $next_page = false;
-            foreach($page['headers'] as $header) {
+            foreach ($page['headers'] as $header) {
                 if (preg_match(LTI_Service_Connector::NEXT_PAGE_REGEX, $header, $matches)) {
                     $next_page = $matches[1];
                     break;

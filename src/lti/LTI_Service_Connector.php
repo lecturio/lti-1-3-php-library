@@ -1,20 +1,52 @@
 <?php
 namespace IMSGlobal\LTI;
 
-use Firebase\JWT\JWT;
+use IMSGlobal\LTI\JWT_Proxy;
 
-class LTI_Service_Connector {
+/**
+ * Class LTI_Service_Connector
+ *
+ * Handles LTI service authentication and requests.
+ *
+ * @package IMSGlobal\LTI
+ */
+class LTI_Service_Connector
+{
 
+    /**
+     * Regex for detecting next page link in headers.
+     * @var string
+     */
     const NEXT_PAGE_REGEX = "/^Link:.*<([^>]*)>; ?rel=\"next\"/i";
 
+    /**
+     * @var LTI_Registration
+     */
     private $registration;
+
+    /**
+     * @var array<string, string> Cached access tokens by scope key
+     */
     private $access_tokens = [];
 
-    public function __construct(LTI_Registration $registration) {
+    /**
+     * LTI_Service_Connector constructor.
+     *
+     * @param LTI_Registration $registration
+     */
+    public function __construct(LTI_Registration $registration)
+    {
         $this->registration = $registration;
     }
 
-    public function get_access_token($scopes) {
+    /**
+     * Get an access token for the given scopes.
+     *
+     * @param array<int, string> $scopes
+     * @return string
+     */
+    public function get_access_token($scopes)
+    {
 
         // Don't fetch the same key more than once.
         sort($scopes);
@@ -26,16 +58,16 @@ class LTI_Service_Connector {
         // Build up JWT to exchange for an auth token
         $client_id = $this->registration->get_client_id();
         $jwt_claim = [
-                "iss" => $client_id,
-                "sub" => $client_id,
-                "aud" => $this->registration->get_auth_server(),
-                "iat" => time() - 5,
-                "exp" => time() + 60,
-                "jti" => 'lti-service-token' . hash('sha256', random_bytes(64))
+            "iss" => $client_id,
+            "sub" => $client_id,
+            "aud" => $this->registration->get_auth_server(),
+            "iat" => time() - 5,
+            "exp" => time() + 60,
+            "jti" => 'lti-service-token' . hash('sha256', random_bytes(64))
         ];
 
         // Sign the JWT with our private key (given by the platform on registration)
-        $jwt = JWT::encode($jwt_claim, $this->registration->get_tool_private_key(), 'RS256', $this->registration->get_kid());
+        $jwt = JWT_Proxy::encode($jwt_claim, $this->registration->get_tool_private_key(), 'RS256', $this->registration->get_kid());
 
         // Build auth token request headers
         $auth_request = [
@@ -54,12 +86,24 @@ class LTI_Service_Connector {
         curl_setopt($ch, CURLOPT_FOLLOWLOCATION, true);
         $resp = curl_exec($ch);
         $token_data = json_decode($resp, true);
-        curl_close ($ch);
+        curl_close($ch);
 
         return $this->access_tokens[$scope_key] = $token_data['access_token'];
     }
 
-    public function make_service_request($scopes, $method, $url, $body = null, $content_type = 'application/json', $accept = 'application/json') {
+    /**
+     * Make a service request with authentication.
+     *
+     * @param array<int, string> $scopes
+     * @param string $method
+     * @param string $url
+     * @param string|null $body
+     * @param string $content_type
+     * @param string $accept
+     * @return array{headers: array<int, string>, body: mixed}
+     */
+    public function make_service_request($scopes, $method, $url, $body = null, $content_type = 'application/json', $accept = 'application/json')
+    {
         $ch = curl_init();
         $headers = [
             'Authorization: Bearer ' . $this->get_access_token($scopes),
@@ -76,11 +120,11 @@ class LTI_Service_Connector {
         }
         curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
         $response = curl_exec($ch);
-        if (curl_errno($ch)){
+        if (curl_errno($ch)) {
             echo 'Request Error:' . curl_error($ch);
         }
         $header_size = curl_getinfo($ch, CURLINFO_HEADER_SIZE);
-        curl_close ($ch);
+        curl_close($ch);
 
         $resp_headers = substr($response, 0, $header_size);
         $resp_body = substr($response, $header_size);

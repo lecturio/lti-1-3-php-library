@@ -1,12 +1,33 @@
 <?php
 namespace IMSGlobal\LTI;
 
-class Submission_Review_Message_Validator implements Message_Validator {
-    public function can_validate($jwt_body) {
+/**
+ * Class Submission_Review_Message_Validator
+ * Message validator for LtiSubmissionReviewRequest messages.
+ * @package IMSGlobal\LTI
+ */
+class Submission_Review_Message_Validator implements Message_Validator
+{
+    /**
+     * Check if the validator can validate the given JWT body.
+     *
+     * @param array<string, mixed> $jwt_body
+     * @return bool
+     */
+    public function can_validate($jwt_body)
+    {
         return $jwt_body['https://purl.imsglobal.org/spec/lti/claim/message_type'] === 'LtiSubmissionReviewRequest';
     }
 
-    public function validate($jwt_body) {
+    /**
+     * Validate the JWT body for LtiSubmissionReviewRequest.
+     *
+     * @param array<string, mixed> $jwt_body
+     * @return bool
+     * @throws LTI_Exception
+     */
+    public function validate($jwt_body)
+    {
         if (empty($jwt_body['sub'])) {
             throw new LTI_Exception('Must have a user (sub)');
         }

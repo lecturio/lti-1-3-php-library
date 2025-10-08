@@ -6,3 +6,5 @@ src/game_example/db/configs/local.json
 .env
 .DS_Store
 .idea
+.cursor
+.history

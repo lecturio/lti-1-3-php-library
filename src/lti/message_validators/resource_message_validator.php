@@ -1,12 +1,32 @@
 <?php
 namespace IMSGlobal\LTI;
 
-class Resource_Message_Validator implements Message_Validator {
-    public function can_validate($jwt_body) {
+/**
+ * Class Resource_Message_Validator
+ * Message validator for LtiResourceLinkRequest messages.
+ */
+class Resource_Message_Validator implements Message_Validator
+{
+    /**
+     * Determine if the validator can validate the given JWT body.
+     *
+     * @param array<string, mixed> $jwt_body JWT body to check
+     * @return bool True if can validate, false otherwise
+     */
+    public function can_validate($jwt_body)
+    {
         return $jwt_body['https://purl.imsglobal.org/spec/lti/claim/message_type'] === 'LtiResourceLinkRequest';
     }
 
-    public function validate($jwt_body) {
+    /**
+     * Validate the JWT body for a LtiResourceLinkRequest message.
+     *
+     * @param array<string, mixed> $jwt_body JWT body to validate
+     * @return bool True if valid
+     * @throws LTI_Exception If validation fails
+     */
+    public function validate($jwt_body)
+    {
         if (empty($jwt_body['sub'])) {
             throw new LTI_Exception('Must have a user (sub)');
         }

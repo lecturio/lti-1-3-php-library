@@ -1,74 +1,173 @@
 <?php
 namespace IMSGlobal\LTI;
 
-class LTI_Deep_Link_Resource {
-
+/**
+ * Class LTI_Deep_Link_Resource
+ * Represents a resource for LTI Deep Linking.
+ * @package IMSGlobal\LTI
+ */
+class LTI_Deep_Link_Resource
+{
+    /**
+     * @var string Resource type
+     */
     private $type = 'ltiResourceLink';
+    /**
+     * @var string|null Resource title
+     */
     private $title;
+    /**
+     * @var string|null Resource URL
+     */
     private $url;
+    /**
+     * @var LTI_Lineitem|null Associated line item
+     */
     private $lineitem;
+    /**
+     * @var array<string, mixed> Custom parameters
+     */
     private $custom_params = [];
+    /**
+     * @var string Presentation target
+     */
     private $target = 'iframe';
 
-    public static function new() {
+    /**
+     * Create a new LTI_Deep_Link_Resource instance.
+     * @return LTI_Deep_Link_Resource
+     */
+    public static function new()
+    {
         return new LTI_Deep_Link_Resource();
     }
 
-    public function get_type() {
+    /**
+     * Get resource type.
+     * @return string
+     */
+    public function get_type()
+    {
         return $this->type;
     }
 
-    public function set_type($value) {
+    /**
+     * Set resource type.
+     * @param string $value
+     * @return $this
+     */
+    public function set_type($value)
+    {
         $this->type = $value;
         return $this;
     }
 
-    public function get_title() {
+    /**
+     * Get resource title.
+     * @return string|null
+     */
+    public function get_title()
+    {
         return $this->title;
     }
 
-    public function set_title($value) {
+    /**
+     * Set resource title.
+     * @param string $value
+     * @return $this
+     */
+    public function set_title($value)
+    {
         $this->title = $value;
         return $this;
     }
 
-    public function get_url() {
+    /**
+     * Get resource URL.
+     * @return string|null
+     */
+    public function get_url()
+    {
         return $this->url;
     }
 
-    public function set_url($value) {
+    /**
+     * Set resource URL.
+     * @param string $value
+     * @return $this
+     */
+    public function set_url($value)
+    {
         $this->url = $value;
         return $this;
     }
 
-    public function get_lineitem() {
+    /**
+     * Get associated line item.
+     * @return LTI_Lineitem|null
+     */
+    public function get_lineitem()
+    {
         return $this->lineitem;
     }
 
-    public function set_lineitem($value) {
+    /**
+     * Set associated line item.
+     * @param LTI_Lineitem $value
+     * @return $this
+     */
+    public function set_lineitem($value)
+    {
         $this->lineitem = $value;
         return $this;
     }
 
-    public function get_custom_params() {
+    /**
+     * Get custom parameters.
+     * @return array<string, mixed>
+     */
+    public function get_custom_params()
+    {
         return $this->custom_params;
     }
 
-    public function set_custom_params($value) {
+    /**
+     * Set custom parameters.
+     * @param array<string, mixed> $value
+     * @return $this
+     */
+    public function set_custom_params($value)
+    {
         $this->custom_params = $value;
         return $this;
     }
 
-    public function get_target() {
+    /**
+     * Get presentation target.
+     * @return string
+     */
+    public function get_target()
+    {
         return $this->target;
     }
 
-    public function set_target($value) {
+    /**
+     * Set presentation target.
+     * @param string $value
+     * @return $this
+     */
+    public function set_target($value)
+    {
         $this->target = $value;
         return $this;
     }
 
-    public function to_array() {
+    /**
+     * Convert resource to array for LTI Deep Linking response.
+     * @return array<string, mixed>
+     */
+    public function to_array()
+    {
         $resource = [
             "type" => $this->type,
             "title" => $this->title,
